@@ -1,14 +1,14 @@
 name: ci
 
-on:
-  push:
-    branches:
-      - 'main'
+on: [push, pull_request]
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -23,4 +23,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: f2iconsulting/fesapi-servewasm:latest
+          tags: f2iconsulting/fesapiwasmexample:latest
