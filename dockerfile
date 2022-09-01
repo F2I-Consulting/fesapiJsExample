@@ -9,4 +9,4 @@ WORKDIR ${SRC_DIR}
 #python sends print and log statements directly to stdout
 ENV PYTHONUNBUFFERED=1
 
-CMD python servewasm.py --port $PORT
+CMD python servewasm.py --port 8080
