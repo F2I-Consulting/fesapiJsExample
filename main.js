@@ -1,6 +1,9 @@
-import FesapiModule from './fesapi.wasm.mjs';
+import FesapiModule from 'https://cdn.jsdelivr.net/npm/@f2i-consulting/fesapi@2.4.0-alpha.1/dist/esm/fesapi.mjs';
 
 let beginLoad = Date.now();
+
+const wasmUrl = 'https://cdn.jsdelivr.net/npm/@f2i-consulting/fesapi@2.4.0-alpha.1/dist/esm/fesapi.wasm';
+
 
 const Fesapi =  await FesapiModule({
     
@@ -26,7 +29,7 @@ const Fesapi =  await FesapiModule({
 
     // Required to load the wasm binary asynchronously. Of course, you can host it wherever you want
     // You can omit locateFile completely when running in node
-    locateFile: file => './fesapi.wasm.wasm'
+    locateFile: file => wasmUrl
 });
 
 
@@ -47,6 +50,7 @@ function cF64Array(size) {
 
 function test_fesapi() {
 
+  
   let local_file = UPLOADED_FILES[0];
 
   appendHtml(local_file);
@@ -69,57 +73,62 @@ function test_fesapi() {
   }          
 
   appendHtml("Faults")
-  let faultSet = repo.getFaultSet();
-  for (let i = 0; i < faultSet.size(); i++)
-  {
-    appendHtml(faultSet.get(i).getTitle());
-  }
-
   // try {
-  //   let faultCount = repo.getFaultCount();    
+  //   var faultSet = repo.getFaultSet();
   // } catch(exception) {
   //   console.error(Fesapi.getExceptionMessage(exception))
   // } finally {
-  //   for (let i = 0; i < faultCount; i++)
+  //   for (let i = 0; i < faultSet.size(); i++)
   //   {
-  //     appendHtml(repo.getFault(i).getTitle());
+  //     appendHtml(faultSet.get(i).getTitle());
   //   }
   // }
 
-  var hdfProxyCount = repo.getHdfProxyCount();
-  appendHtml('There are ' + hdfProxyCount + ' hdf files associated to this epc document.');
-
-  for (let hdfProxyIndex = 0; hdfProxyIndex < hdfProxyCount; ++hdfProxyIndex) 
-  {
-    appendHtml('Hdf file relative path : ' + repo.getHdfProxy(hdfProxyIndex).getRelativePath());
-  }
-
-  for (let warningIndex = 0; warningIndex < repo.getWarnings().size(); ++warningIndex) 
-  {
-    appendHtml('Warning #' + warningIndex + ' : ' + repo.getWarnings().get(warningIndex));
-  }
-
-  for (let i = 0; i < repo.getFaultPolylineSetRepresentationCount(); i++)
-  {
-    var faultPolyRep = repo.getFaultPolylineSetRepresentation(i);
-    appendHtml(typeof faultPolyRep);
-    appendHtml('Fault PolylineSet name: ' + faultPolyRep.getTitle());
-    var nodeCount = faultPolyRep.getXyzPointCountOfAllPatches();
-    appendHtml('node Count: ' + nodeCount);
-    //var allXyzPoints = cF64Array(parseInt(nodeCount) * 3);        
-    //let allXyzPoints = new Float64Array(parseInt(nodeCount) * 3);
-    let allXyzPoints = new Fesapi.vectorDouble();
-    allXyzPoints.resize(parseInt(nodeCount) * 3, 1.);
-    faultPolyRep.getXyzPointsOfAllPatchesInGlobalCrs(allXyzPoints);
-    for (let i = 0; i < allXyzPoints.size(); ++i) 
+  
+    var faultCount = repo.getFaultCount();    
+    console.log(repo.getFaultCount());
+    for (let i = 0; i < faultCount; i++)
     {
-      appendHtml('value #' + i + ' : ' + allXyzPoints.get(i));
+      appendHtml(repo.getFault(i).getTitle());
     }
 
-    allXyzPoints.delete();
+
+    var hdfProxyCount = repo.getHdfProxyCount();
+    appendHtml('There are ' + hdfProxyCount + ' hdf files associated to this epc document.');
+
+    for (let hdfProxyIndex = 0; hdfProxyIndex < hdfProxyCount; ++hdfProxyIndex) 
+    {
+      appendHtml('Hdf file relative path : ' + repo.getHdfProxy(hdfProxyIndex).getRelativePath());
+    }
+
+    for (let warningIndex = 0; warningIndex < repo.getWarnings().size(); ++warningIndex) 
+    {
+      appendHtml('Warning #' + warningIndex + ' : ' + repo.getWarnings().get(warningIndex));
+    }
+  
+  try {
+    for (let i = 0; i < repo.getFaultPolylineSetRepresentationCount(); i++)
+    {
+      var faultPolyRep = repo.getFaultPolylineSetRepresentation(i);
+      appendHtml(typeof faultPolyRep);
+      appendHtml('Fault PolylineSet name: ' + faultPolyRep.getTitle());
+      var nodeCount = faultPolyRep.getXyzPointCountOfAllPatches();
+      appendHtml('node Count: ' + nodeCount);
+      //var allXyzPoints = cF64Array(parseInt(nodeCount) * 3);        
+      //let allXyzPoints = new Float64Array(parseInt(nodeCount) * 3);
+      let allXyzPoints = new Fesapi.vectorDouble();
+      allXyzPoints.resize(parseInt(nodeCount) * 3, 1.);
+      faultPolyRep.getXyzPointsOfAllPatchesInGlobalCrs(allXyzPoints);
+      for (let i = 0; i < allXyzPoints.size(); ++i) 
+      {
+        appendHtml('value #' + i + ' : ' + allXyzPoints.get(i));
+      }
+
+      allXyzPoints.delete();
+    }
+  } catch(exception) {
+    console.error(Fesapi.getExceptionMessage(exception))
   }
-
-
 }
 
 function copyFiles(file){
