@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <title>Fesapi WebAssembly Workbench</title>
+    <style>
+      #entry, #prompt {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fesapi WebAssembly Workbench</h1>
+    <h2 id="status">Loading JavaScript...</h2>
+    <div id="log">
+    </div>
+    <form id="form">
+      <label id="prompt" for="input">&gt;&nbsp;</label>
+      <input type="file" id="input" name="input" accept=".epc"
+             placeholder="Choose an epc file"
+             size="80"
+             multiple>
+    </form>    
+  </body>
+ 
+  <script type="module" src="./main.js"></script>
+</html>
